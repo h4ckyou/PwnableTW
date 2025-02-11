@@ -18,7 +18,10 @@ char *note;
 }
 ```
 
-Since there's a function pointer which is triggered when you use the `print_note` function
+There's function pointer which is triggered when you use the `print_note` function
 ![image](https://github.com/user-attachments/assets/60a29df6-a466-465d-aceb-133f674527fa)
 ![image](https://github.com/user-attachments/assets/743c3e60-c691-4359-a534-231907fe2658)
 
+I leveraged the UAF to overwrite the function pointer to point to `printf` thus getting info leaks!
+
+With info leaks gotten i then overwrite the function pointer to call system

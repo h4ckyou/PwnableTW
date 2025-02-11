@@ -6,7 +6,14 @@ This was a really interesting challenge because i wasn't able to solve it the fi
 
 It is a standard heap exploitation challenge where you can allocate, free and reallocate memory
 
-Some constraint here is that we can't edit any chunk, we can't only make small sized allocation, no use after free and we are limited to just 2 unique allocations
+This uses glibc 2.29
+![image](https://github.com/user-attachments/assets/a14bf960-9434-4a76-b05d-4e2a5004d47c)
+
+Some constraints here is that:
+- We can't edit any chunk
+- We can only make small sized allocations
+- No use after free
+- We are limited to just 2 unique allocations
 
 Also allocations and deallocations is managed through `realloc`
 ![image](https://github.com/user-attachments/assets/404fd03b-1584-43b0-b64a-31f12c940bf0)

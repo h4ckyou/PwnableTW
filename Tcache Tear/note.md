@@ -42,7 +42,25 @@ But to do that we need a libc leak
 
 At first i had issue with this because i wanted to fill up the tcache then any more free will be placed in maybe the unsorted bin which has pointers to libc as it's fd/bk value
 
-The issue with that is that we can only make one allocation so even if we free the chunk when we allocate it, we'll end up with the same chunk
+The issue with that is that we can only make one allocation so even if we free the chunk when we allocate it, we'll end up with the same chunk and also there's no "view chunk" option that can let us read the content of our chunk so what a bummer
+
+Now it occurred to me that we're given an option to provide a name? Why that, is it important?
+
+That's actually useful because with that we can fake a chunk on the global name variable then make malloc return it and on free'ing the chunk it will be placed on the unsorted bin
+
+I decided to use a chunk of size `0x500` because if you free that it will get placed to the unsorted bin 
+
+There are some checks that are done on a chunk that's about to be consolidated for example if we don't pass that we get this error:
+- double free or corruption (!prev)
+- corrupted size vs. prev_size
+
+The first check just validates that the next chunk prev inuse bit is set
+![image](https://github.com/user-attachments/assets/b7509c42-312e-403d-80fd-2717dcc29b48)
+
+While the second one occurs during the forward consolidation on the unlink macro where it validates that the chunk size equals the next chunk prev size
+![image](https://github.com/user-attachments/assets/17bc4767-b285-4024-98ab-eac02e71ba4d)
+
+
 
 
 

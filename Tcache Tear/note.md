@@ -22,5 +22,17 @@ Here in the `allocate` function, we can make any sized allocation as long as it'
 ![image](https://github.com/user-attachments/assets/50e33f2d-4562-4788-8372-24a8c8e77ed2)
 ![image](https://github.com/user-attachments/assets/ef2304cd-9fb8-4168-9e97-9ddca82c2478)
 
-But because `__read_chk` size is defined as `size_t` if the size we passed is negative it will wrap around thus giving us an overflow, so we just need to make size some value such that when it's subtracted by 16 it will give a negative value. Any number less than 16 is sufficient
+But because `__read_chk` buflen is defined as `size_t` if the size we passed is negative it will wrap around thus giving us an overflow, so we just need to make size some value such that when it's subtracted by 16 it will give a negative value. Any number less than 16 is sufficient
+
+Moving on we can see that after it free's our pointer it doesn't set it to null. Also we're limited to just 8 free's
+![image](https://github.com/user-attachments/assets/69b33468-2288-401e-b31a-3c2115763885)
+
+And the last important thing is that our name is stored in a global variable
+![image](https://github.com/user-attachments/assets/c813106d-ca4a-4876-b84a-6dc6c6636e64)
+
+That's all the binary does!
+
+First we can leverage the UAF to get double free on the tcache as there's no check to see if the chunk we're about to free is already in the tcache bin
+![image](https://github.com/user-attachments/assets/66df5bff-83d9-4a37-9a4a-51eae585c9e2)
+
 

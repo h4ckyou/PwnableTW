@@ -33,6 +33,7 @@ And the last important thing is that our name is stored in a global variable
 That's all the binary does!
 
 First we can leverage the UAF to get double free on the tcache as there's no check to see if the chunk we're about to free is already in the tcache bin
+
 ![image](https://github.com/user-attachments/assets/66df5bff-83d9-4a37-9a4a-51eae585c9e2)
 
 

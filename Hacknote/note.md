@@ -22,6 +22,7 @@ There's function pointer which is triggered when you use the `print_note` functi
 ![image](https://github.com/user-attachments/assets/60a29df6-a466-465d-aceb-133f674527fa)
 ![image](https://github.com/user-attachments/assets/743c3e60-c691-4359-a534-231907fe2658)
 
-I leveraged the UAF to overwrite the function pointer to point to `printf` thus getting info leaks!
+I leveraged the UAF to overwrite the function pointer to point to `system` 
 
-With info leaks gotten i then overwrite the function pointer to call system
+To get libc leak i malloc a chunk of size `0x500` then on free'ing it gets placed in the unsorted bin and on any new allocation request malloc splits that chunk in the unsorted bin by the size of what we want to allocate then it updates the remainder's bk and fd pointers
+

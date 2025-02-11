@@ -1,2 +1,1 @@
-# PwnableTW
-Wargame: https://pwnable.tw/
+# PwnableTW Solutions

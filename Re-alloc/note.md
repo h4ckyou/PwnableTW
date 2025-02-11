@@ -64,7 +64,7 @@ Another important thing to note is that the way chunk is being removed from the 
 
 Basically a chunk can be served from the tcache as long as there exists some values in the tcache entry, in later versions of libc there's a fix for this and that's by checking the tcache count and ensuring it isn't zero
 
-With this what i did was to leverage the program to get a UAF, then I did TcacheDup and finally a Tcache Poisoning Attack by overwriting the got of `atoll` to `printf`
+With this what i did was to leverage the program to get a UAF, then I did tcachedup and finally a Tcache Poisoning Attack by overwriting the got of `atoll` to `printf`
 
 I believe this is a really good challenge for beginners like me learning heap exploitation
 

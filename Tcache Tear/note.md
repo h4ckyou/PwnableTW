@@ -57,10 +57,16 @@ There are some checks that are done on a chunk that's about to be consolidated f
 The first check just validates that the next chunk prev inuse bit is set
 ![image](https://github.com/user-attachments/assets/b7509c42-312e-403d-80fd-2717dcc29b48)
 
-While the second one occurs during the forward consolidation on the unlink macro where it validates that the chunk size equals the next chunk prev size
+While the second one occurs during the forward consolidation with the unlink macro where it validates that the chunk size equals the next chunk prev size
 ![image](https://github.com/user-attachments/assets/17bc4767-b285-4024-98ab-eac02e71ba4d)
 
+But this can be easily bypassed because we have an overflow, so we can forge fake chunks that passes the check
 
+And with that the chunk will be placed in the unsorted bin and we can use the info function to view it's content thus getting a libc leak
+
+The rest is straight forward, since we have a libc leak we perform tcache dup again but this time we overwrite `__free_hook` to a one gadget
+
+Pretty nice challenge!
 
 
 

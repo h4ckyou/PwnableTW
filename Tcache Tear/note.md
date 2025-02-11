@@ -36,4 +36,36 @@ First we can leverage the UAF to get double free on the tcache as there's no che
 
 ![image](https://github.com/user-attachments/assets/66df5bff-83d9-4a37-9a4a-51eae585c9e2)
 
+And with that we can get arb write, but since the GOT is not writable we need to target the libc
+
+But to do that we need a libc leak
+
+At first i had issue with this because i wanted to fill up the tcache then any more free will be placed in maybe the unsorted bin which has pointers to libc as it's fd/bk value
+
+The issue with that is that we can only make one allocation so even if we free the chunk when we allocate it, we'll end up with the same chunk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

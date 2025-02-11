@@ -18,7 +18,7 @@ Some constraints here is that:
 Also allocations and deallocations is managed through `realloc`
 ![image](https://github.com/user-attachments/assets/404fd03b-1584-43b0-b64a-31f12c940bf0)
 
-One bug here is that we can control the size of what is being allocated
+One interesting thing here is that we can control the size of what is being allocated
 ![image](https://github.com/user-attachments/assets/c6f291b9-4f81-4cbd-bd1a-f1d40953ec77)
 ![image](https://github.com/user-attachments/assets/6b796860-1d59-4767-ae92-e8347a1102d9)
 

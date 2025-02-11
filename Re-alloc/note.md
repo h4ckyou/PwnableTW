@@ -66,4 +66,6 @@ Basically a chunk can be served from the tcache as long as there exists some val
 
 With this what i did was to leverage the program to get a UAF, then I did TcacheDup and finally a Tcache Poisoning Attack by overwriting the got of `atoll` to `printf`
 
+I believe this is a really good challenge for beginners like me learning heap exploitation
 
+Thanks to the author for the awesome challenge

@@ -41,5 +41,18 @@ To trigger the overflow you need to know that `strncat` will append non-null byt
 
 So the trick is that if we set the size as 47 basically we give it 47 bytes as the bullet description when it does `48 - dest->bullet` that would give `1` and then after `strncat` is called it would overwrite the next byte on the stack to a null byte and that value represents the current size
 
+Then when the new size is calculated it will actually be `1 + 0` because we read in just a byte to `s` and currently `dest->bullet` is `0`
+
+```c
+v3 = strlen(s) + dest->bullet;
+dest->bullet = v3
+```
+
+With that when we use the power up function again we can now write out of bound the buffer since `strncat` appends bytes thus overwriting the return address
+
+And it's a straight forward `ret2libc` once you have eip control!
+
+Pretty neat challenge.
+
 
 

@@ -16,3 +16,18 @@ We can create a silver bullet using option 1
 
 What that does is reading some input to the buffer then updating it's size `s->bullet` and we can only use this once!
 
+The power up function is this
+![image](https://github.com/user-attachments/assets/4d2061c4-7f98-4bee-bd22-779c68afda21)
+
+Basically it makes sure that the value of the bullet which represents the string length of the buffer isn't greater than 47, then it reads some sized number of bytes gotten from subtracting 48 with the bullet value
+
+Then it uses `strncat` to append the content of `s` to `dest->description` and it then updates `dest->bullet` to the sum of the length of s with it's original size
+
+And the final function is beat
+![image](https://github.com/user-attachments/assets/52a73f6b-0a7b-46cd-94c9-9ab7e4e61669)
+![image](https://github.com/user-attachments/assets/23e85a5b-0c5e-4a23-876c-bcd43602c20e)
+
+This would only return True if our bullet size is greater than `0x7FFFFFFF`
+![image](https://github.com/user-attachments/assets/97d10562-60f5-42e3-86a3-bbb1b9eb3f9d)
+
+

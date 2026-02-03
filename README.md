@@ -7,3 +7,4 @@
 - [Silver Bullet](https://github.com/h4ckyou/PwnableTW/blob/main/Silver%20Bullet/note.md)
 - [Re-alloc](https://github.com/h4ckyou/PwnableTW/blob/main/Re-alloc/note.md)
 - [Tcache Tear](https://github.com/h4ckyou/PwnableTW/blob/main/Tcache%20Tear/note.md)
+- [Baby Stack](https://github.com/h4ckyou/PwnableTW/blob/main/Babystack/solve.py)

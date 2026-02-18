@@ -64,12 +64,14 @@ int __cdecl main(int argc, const char **argv, const char **envp)
 }
 ```
 
-There's an out of bound write since it doesn't verify that the number of values we want to sort isn't greater than the size of the numbers array, but the presence of canary makes it a bit tough
+There is an out-of-bounds write vulnerability because the program fails to verify that the number of integers requested for sorting does not exceed the size of the allocated array.
 
-We can bypass the canary check by making `scanf` not overwrite the original value using `+`
+Although a stack canary is present, it can be bypassed. By supplying a `+` to `scanf`, we prevent it from overwriting the existing value, effectively preserving the original canary.
 
-To leak memory we leverage the uninitialized memory chained with not null termination making `printf` leak adjacent memory using the `%s` specifier
+To leak memory, we exploit uninitialized stack data combined with the absence of proper null termination. When `printf` is invoked with the `%s` specifier, it continues reading until it reaches a null byte but in this case since there's no null termination it would keep reading past the intended buffer boundary, leaking adjacent memory contents.
 
-The binary does sort the provided integers so we give it values such that the canary doesn't get sorted
+Since the binary sorts the provided integers, we carefully choose input values such that the canary remains in the correct position and is not disrupted by the sorting operation.
+
+And with the canary preserved and libc leak gotten we then perform `ret2libc`
 
 Profit.

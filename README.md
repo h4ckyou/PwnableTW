@@ -9,3 +9,4 @@
 - [Tcache Tear](https://github.com/h4ckyou/PwnableTW/blob/main/Tcache%20Tear/note.md)
 - [Baby Stack](https://github.com/h4ckyou/PwnableTW/blob/main/Babystack/solve.py)
 - [3x17](https://github.com/h4ckyou/PwnableTW/blob/main/3x17/note.md)
+- [Dubblesort](https://github.com/h4ckyou/PwnableTW/blob/main/Dubblesort/note.md)

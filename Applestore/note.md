@@ -13,7 +13,7 @@ mark@rwx:~/Desktop/Labs/PwnableTW/applestore$ checksec applestore
     Stripped:   No
 ```
 
-Here's the structure made use of:
+Here's the structure I made use of:
 
 ```c
 00000000 struct phone_t // sizeof=0x10

@@ -49,39 +49,9 @@ unsigned int checkout()
   puts("Want to checkout? Maybe next time!");
   return __readgsdword(0x14u) ^ v4;
 }
-
-int cart()
-{
-  int idx; // eax
-  int list_idx; // [esp+18h] [ebp-30h]
-  int sum; // [esp+1Ch] [ebp-2Ch]
-  phone_t *current; // [esp+20h] [ebp-28h]
-  char buf[22]; // [esp+26h] [ebp-22h] BYREF
-  unsigned int v6; // [esp+3Ch] [ebp-Ch]
-
-  v6 = __readgsdword(0x14u);
-  list_idx = 1;
-  sum = 0;
-  printf("Let me check your cart. ok? (y/n) > ");
-  fflush(stdout);
-  my_read(buf, 21u);
-  if ( buf[0] == 'y' )
-  {
-    puts("==== Cart ====");
-    for ( current = myCart.next; current; current = current->next )
-    {
-      idx = list_idx++;
-      printf("%d: %s - $%d\n", idx, current->name, current->price);
-      sum += current->price;
-    }
-  }
-  return sum;
-}
 ```
 
 `mem` isn't initialized so it uses the previous stack frame values, and it happens that `next` holds a pointer to a user controllable buffer.
-
-Also it happens to be that `current->name` is a pointer to some libc region, so libc leak gotten!
 
 Using this we can insert the `current` address into the previous node's next pointer.
 
@@ -122,6 +92,39 @@ unsigned int delete()
     current = current->next;
   }
   return __readgsdword(0x14u) ^ v7;
+}
+```
+
+And arb read via the `cart` function
+
+```c
+
+int cart()
+{
+  int idx; // eax
+  int list_idx; // [esp+18h] [ebp-30h]
+  int sum; // [esp+1Ch] [ebp-2Ch]
+  phone_t *current; // [esp+20h] [ebp-28h]
+  char buf[22]; // [esp+26h] [ebp-22h] BYREF
+  unsigned int v6; // [esp+3Ch] [ebp-Ch]
+
+  v6 = __readgsdword(0x14u);
+  list_idx = 1;
+  sum = 0;
+  printf("Let me check your cart. ok? (y/n) > ");
+  fflush(stdout);
+  my_read(buf, 21u);
+  if ( buf[0] == 'y' )
+  {
+    puts("==== Cart ====");
+    for ( current = myCart.next; current; current = current->next )
+    {
+      idx = list_idx++;
+      printf("%d: %s - $%d\n", idx, current->name, current->price);
+      sum += current->price;
+    }
+  }
+  return sum;
 }
 ```
 

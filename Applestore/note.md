@@ -132,7 +132,6 @@ My attack plan was to first leak stack, and i used the arb write primitive to st
 
 Then I leaked the stack and calculated the ebp of the `main` function.
 
-I overwrote the ebp from the saved ebp of `handler` stack frame to my ropchain.
+I overwrote the saved ebp of `handler` stack frame to the address of my ropchain.
 
-After `leave, ret` was then executed the `esp` pointed to the ropchain - stack pivot!
-
+After `leave, ret` was then executed in `main`, a stack pivot was triggered pointing `esp` to my ropchain.

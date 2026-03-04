@@ -77,3 +77,37 @@ int add_page()
 It iterates through [0..9] meaning there's an off by 1, with this if `books[8]` which maps to `sizes[0]` is null then a heap allocation can be stored there.
 
 And during `edit_page` when we use index 0 it would use `books[0] => sizes[0]` and this in turn leads to a heap overflow
+
+A limitation however is that we can only make at most 9 seperate allocations.
+
+Another vulnerabilitiy is at `edit_page`
+
+```c
+int edit_page()
+{
+  unsigned int idx; // [rsp+Ch] [rbp-4h]
+
+  printf("Index of page :");
+  idx = read_int();
+  if ( idx > 7 )
+  {
+    puts("out of page:");
+    exit(0);
+  }
+  if ( !books[idx] )
+    return puts("Not found !");
+  printf("Content:");
+  read_input(books[idx], sizes[idx]);
+  sizes[idx] = strlen(books[idx]);
+  return puts("Done !");
+}
+```
+
+During size update, the value is calculated from the length of the string.
+
+This leads to a heap overflow into the next chunk size field.
+
+With this, I performed a House of Orange attack.
+
+First expanded the top chunk to get libc leak, then performed unsorted bin attack on `_IO_list_all` and finally `FSOP`
+

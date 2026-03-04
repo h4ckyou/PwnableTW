@@ -40,3 +40,40 @@ char author[64];
 char *books[8];
 uint32_t sizes[8];
 ```
+
+The first vulnerabilitiy is at `add_page`
+
+```c
+int add_page()
+{
+  unsigned int i; // [rsp+Ch] [rbp-14h]
+  char *ptr; // [rsp+10h] [rbp-10h]
+  __int64 size; // [rsp+18h] [rbp-8h]
+
+  for ( i = 0; ; ++i )
+  {
+    if ( i > 8 )
+      return puts("You can't add new page anymore!");
+    if ( !books[i] )
+      break;
+  }
+  printf("Size of page :");
+  size = read_int();
+  ptr = (char *)malloc(size);
+  if ( !ptr )
+  {
+    puts("Error !");
+    exit(0);
+  }
+  printf("Content :");
+  read_input(ptr, size);
+  books[i] = ptr;
+  sizes[i] = size;
+  ++count;
+  return puts("Done !");
+}
+```
+
+It iterates through [0..9] meaning there's an off by 1, with this if `books[8]` which maps to `sizes[0]` is null then a heap allocation can be stored there.
+
+And during `edit_page` when we use index 0 it would use `books[0] => sizes[0]` and this in turn leads to a heap overflow

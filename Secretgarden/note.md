@@ -162,3 +162,4 @@ The pointers `in_use` flag is also set while the other isn't, this makes it poss
 
 And for code execution I did a fastbin attack and modified `_IO_list_all` to my fake file structure on the heap.
 
+Although initially i targetted writing to `__malloc_hook` but the one gadget constraint wasn't satisfied.

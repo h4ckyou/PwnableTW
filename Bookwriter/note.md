@@ -13,5 +13,30 @@ mark@rwx:~/Desktop/Labs/PwnableTW/bookwriter$ checksec bookwriter
     FORTIFY:    Enabled
 ```
 
-No PIE enabled...
+No PIE enabled
 
+This is a heap challenge as you can tell from the menu
+
+```
+mark@rwx:~/Desktop/Labs/PwnableTW/bookwriter$ ./bookwriter
+Welcome to the BookWriter !
+Author :asdf
+----------------------
+      BookWriter      
+----------------------
+ 1. Add a page        
+ 2. View a page       
+ 3. Edit a page       
+ 4. Information       
+ 5. Exit              
+----------------------
+Your choice :
+```
+
+The global variables are defined as this:
+
+```c
+char author[64];
+char *books[8];
+uint32_t sizes[8];
+```

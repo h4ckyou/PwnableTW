@@ -2,6 +2,7 @@
 
 <img width="596" height="342" alt="image" src="https://github.com/user-attachments/assets/99b959f1-4f6e-4ad6-be5d-1e452129c7da" />
 
+
 ```
 mark@rwx:~/Desktop/Labs/PwnableTW/heap_paradise$ file heap_paradise
 heap_paradise: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter ./ld-2.23.so, for GNU/Linux 2.6.32, BuildID[sha1]=0f2c77e0e0c4e37c78f827f6ae317e208bbb202a, stripped

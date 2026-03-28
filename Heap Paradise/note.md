@@ -65,3 +65,42 @@ void free_chunk()
     free(chunks[v0]);
 }
 ```
+
+Vulnerability discovered:
+- Double Free
+
+The constraint however is:
+- We can only make at most 15 allocations
+- The size passed to malloc can't exceed `0x78`
+- No function to print the heap data
+  
+The libc version is `2.23` so here it makes use of the fastbin
+
+```
+mark@rwx:~/Desktop/Labs/PwnableTW/heap_paradise$ ./ld-2.23.so ./libc.so.6 
+GNU C Library (Ubuntu GLIBC 2.23-0ubuntu5) stable release version 2.23, by Roland McGrath et al.
+Copyright (C) 2016 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+Compiled by GNU CC version 5.4.0 20160609.
+Available extensions:
+	crypt add-on version 2.1 by Michael Glad and others
+	GNU Libidn by Simon Josefsson
+	Native POSIX Threads Library by Ulrich Drepper et al
+	BIND-8.2.3-T5B
+libc ABIs: UNIQUE IFUNC
+For bug reporting instructions, please see:
+<https://bugs.launchpad.net/ubuntu/+source/glibc/+bugs>.
+```
+
+Having leaks would have made this super easy due to the double free bug, but in this case we have no functions which can print the chunk data.
+
+My goal was to first get a libc leak and i achieved this using:
+- partial overwrite
+- metadata corruption of chunk size to get chunk into unsorted bin
+- fastbin corruption to write to `stdout`
+
+So `FSOP` to leak libc address.
+
+With libc gotten I did a fastbin corruption to overwrite `__malloc_hook` with my one gadget address but to trigger it I needed to cause `free` to crash because it internally called `malloc`, reason i did this was because i had exhausted my allocations.

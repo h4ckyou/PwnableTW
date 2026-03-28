@@ -72,7 +72,7 @@ Vulnerability discovered:
 The constraint however is:
 - We can only make at most 15 allocations
 - The size passed to malloc can't exceed `0x78`
-- No function to print the heap data
+- No function to print the heap chunk data
   
 The libc version is `2.23` so here it makes use of the fastbin
 
@@ -96,11 +96,9 @@ For bug reporting instructions, please see:
 
 Having leaks would have made this super easy due to the double free bug, but in this case we have no functions which can print the chunk data.
 
-My goal was to first get a libc leak and i achieved this using:
+My goal was to first get a libc leak and i achieved this by doing:
 - partial overwrite
 - metadata corruption of chunk size to get chunk into unsorted bin
-- fastbin corruption to write to `stdout`
+- fastbin corruption to write to `stdout`, so `FSOP` to leak libc address.
 
-So `FSOP` to leak libc address.
-
-With libc gotten I did a fastbin corruption to overwrite `__malloc_hook` with my one gadget address but to trigger it I needed to cause `free` to crash because it internally called `malloc`, reason i did this was because i had exhausted my allocations.
+With libc gotten I did a fastbin corruption to overwrite `__malloc_hook` with my one gadget address but to trigger it, I needed to cause `free` to crash because it internally called `malloc`, reason i did this was because i had exhausted my allocations.

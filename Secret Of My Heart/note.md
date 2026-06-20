@@ -30,7 +30,7 @@ Your choice :4
 mark@rwx:~/Desktop/Labs/PwnableTW/secretofmyheart$
 ```
 
-The program is really small, it uses a structure that manages the list of secrets:
+The program uses a structure that manages the list of secrets:
 
 ```c
 struct secret_t {

@@ -227,7 +227,15 @@ free(1)
 alloc(1, 0x78, b"write done!")
 ```
 
+The path of using fastbin consolidation takes just 1/16 trials since we are just attempting to get 1 nibble right.
 
+Although i wasn't able to finally pull it off even after getting leaks.
+
+The other path is gaining allocation to the `tcache_perthread_struct`, this gives us an easy way to corrupt the `head` of the list.
+
+It does take 1/256 trials since we need to get the (heap & libc) leak right.. 
+
+Cool challenge!
 
 
 

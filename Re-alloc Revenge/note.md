@@ -193,7 +193,7 @@ void rfree()
 }
 ```
 
-The bug lives in `reallocate`: it never checks whether `size` is `0`. Since `realloc(ptr, 0)` behaves like `free(ptr)`, this lets us free a chunk through the reallocation path.
+The bug lives in `reallocate`, it never checks whether `size` is `0`. Since `realloc(ptr, 0)` behaves like `free(ptr)`, this lets us free a chunk through the reallocation path.
 
 When a chunk is freed this way, `realloc` returns `NULL`. The code then hits the check `if (!v3)` which now succeeds.. so it skips the update `heap[idx] = v3`. As a result, `heap[idx]` keeps pointing at the freed chunk instead of being cleared.
 

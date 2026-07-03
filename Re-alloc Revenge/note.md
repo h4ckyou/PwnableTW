@@ -18,7 +18,7 @@ mark@rwx:~/Desktop/Labs/PwnableTW/realloc-rev$ checksec re-alloc_revenge
 mark@rwx:~/Desktop/Labs/PwnableTW/realloc-rev$
 ```
 
-A bit of fresher, it only has 3 functions we can make use of:
+A bit fresher, it only has three functions we can make use of.
 
 ```
 mark@rwx:~/Desktop/Labs/PwnableTW/realloc-rev$ ./re-alloc_revenge
@@ -33,7 +33,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$
 Your choice:
 ```
 
-There's no `edit` function and the content of an allocated chunk isn't printed out.
+There is no `edit` function (directly), and the contents of an allocated chunk are never printed.
 
 `main` function:
 
@@ -193,11 +193,40 @@ void rfree()
 }
 ```
 
-The bug is in `reallocate`, it doesn't check if `size` is equal to `0`, this enables us to free a chunk.
+The bug lives in `reallocate`: it never checks whether `size` is `0`. Since `realloc(ptr, 0)` behaves like `free(ptr)`, this lets us free a chunk through the reallocation path.
 
-And because `free` returns `NULL` on free, then the check `if (!v3)` succeeds which makes it not to update the chunk `heap[idx] = v3`
+When a chunk is freed this way, `realloc` returns `NULL`. The code then hits the check `if (!v3)` which now succeeds.. so it skips the update `heap[idx] = v3`. As a result, `heap[idx]` keeps pointing at the freed chunk instead of being cleared.
 
-This leads to a UAF.
+This leads to a use-after-free (UAF).
+
+To solve this I took two approaches, both relies on gaining overlapping allocation with the `_IO_2_1_stdout_` file stream structure to obtain a libc leak.
+
+Although the binary does not provide an explicit `edit` function, `reallocate` effectively gives us one. Calling `realloc(ptr, 0)` frees a chunk, while `realloc(ptr, size)` allows us to resize an existing allocation. Depending on the requested size, `realloc` may either shrink or expand the chunk.
+
+The program restricts allocation sizes to at most `0x78`, we are limited to working with the tcache and fastbins.
+
+A useful property of glibc's allocator is that if `fastbin` chunks are present when a sufficiently large allocation request is made, it first performs fastbin consolidation before servicing the request.
+
+We can trigger this consolidation using the following `scanf` trick:
+
+```c
+__isoc99_scanf("%d", &v3); // '5' * 0x500 (this would trigger consolidation)
+```
+
+Here's the trick I made use of to gain arb write:
+
+```python
+alloc(0, 0x78, b"A")
+realloc(0, 0)
+realloc(0, 0x78, p64(address))
+
+alloc(1, 0x78, b"A")
+realloc(1, 0x28, b"A")
+free(1)
+
+alloc(1, 0x78, b"write done!")
+```
+
 
 
 
